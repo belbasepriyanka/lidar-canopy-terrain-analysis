@@ -1,5 +1,7 @@
 # LiDAR Canopy and Terrain Analysis
 
+![Project preview](assets/preview.svg)
+
 A lightweight LiDAR workflow for separating terrain and vegetation returns, generating DTM/DSM surfaces, calculating a canopy height model (CHM), and summarizing vegetation structure.
 
 ## Skills demonstrated
