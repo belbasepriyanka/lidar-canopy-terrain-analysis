@@ -1,30 +1,24 @@
-# LiDAR Canopy and Terrain Analysis
+# LiDAR Canopy & Terrain Analysis
 
-![Project preview](assets/preview.svg)
+A recruiter-ready LiDAR demonstration covering point-cloud structure, ground normalization, canopy-height metrics, visualization, and reproducible code.
 
-A lightweight LiDAR workflow for separating terrain and vegetation returns, generating DTM/DSM surfaces, calculating a canopy height model (CHM), and summarizing vegetation structure.
+> Public data in this repository are synthetic point-cloud samples for demonstration.
 
-## Skills demonstrated
-- LiDAR point-cloud concepts
-- Ground vs vegetation returns
-- Digital Terrain Model (DTM)
-- Digital Surface Model (DSM)
-- Canopy Height Model (CHM)
-- Canopy height and cover metrics
-- Spatial interpolation and visualization
+## Demo metrics
+- Points: **6,000**
+- Vegetation fraction: **61.22%**
+- Mean canopy height: **6.59 m**
+- 95th percentile canopy height: **13.79 m**
+
+![Canopy map](figures/canopy_height_map.svg)
+![Height distribution](figures/height_distribution.svg)
 
 ## Run
 ```bash
 pip install -r requirements.txt
-python src/demo.py
-pytest -q
+python scripts/run_demo.py
+python -m pytest -q
 ```
 
-## Data note
-The demonstration creates a synthetic point cloud. A production version can be connected to LAS/LAZ data using tools such as PDAL or laspy and extended to tree segmentation, biomass estimation, or habitat structure analysis.
-
-## Applications
-Forestry, vegetation management, ecological monitoring, biomass studies, powerline vegetation screening, and terrain characterization.
-
-## Author
-Priyanka Belbase | LiDAR | Vegetation Monitoring | GIS | Remote Sensing
+## Transfer to real data
+Replace the sample CSV with LAS/LAZ-derived points or add a `laspy`/PDAL ingestion step; the normalized-height and canopy-metric logic remains the same.
