@@ -1,5 +1,7 @@
 # LiDAR Canopy & Terrain Analysis
 
+**Timeline:** Geospatial/vegetation-structure skill development **2024–2025** • Public GitHub portfolio implementation **2026**
+
 A recruiter-ready LiDAR demonstration covering point-cloud structure, ground normalization, canopy-height metrics, visualization, and reproducible code.
 
 > Public data in this repository are synthetic point-cloud samples for demonstration.
