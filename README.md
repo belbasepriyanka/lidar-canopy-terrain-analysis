@@ -1,8 +1,6 @@
 # LiDAR Canopy & Terrain Analysis
 
-**Timeline:** Geospatial/vegetation-structure skill development **2024–2025** • Public GitHub portfolio implementation **2026**
-
-A recruiter-ready LiDAR project covering point-cloud structure, ground normalization, canopy-height metrics, visualization, reproducible synthetic testing, and a **real USGS 3DEP LAS/LAZ ingestion pathway**.
+A reproducible LiDAR project covering point-cloud structure, ground normalization, canopy-height metrics, visualization, synthetic testing, and a **real USGS 3DEP LAS/LAZ ingestion pathway**.
 
 > The committed sample point cloud is synthetic for immediate reproducibility. The repository also includes code and documentation for processing real public USGS 3DEP point-cloud files.
 
@@ -38,6 +36,10 @@ python -m pytest -q
 ```bash
 python src/real_laz_ingestion.py path/to/your_tile.laz
 ```
+
+## Technical scope
+
+The workflow demonstrates point-cloud ingestion, ASPRS classification handling, height normalization, vegetation filtering, canopy-height metrics, and reproducible QA-oriented processing. It is structured so the synthetic example can be replaced with public or project-specific LAS/LAZ data.
 
 ## Scientific / engineering boundary
 
