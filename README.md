@@ -1,108 +1,64 @@
-# Urban Tree Canopy Assessment Using LiDAR & Multispectral Remote Sensing
+# Urban Tree-Canopy Mapping | LiDAR + NAIP + Random Forest
 
-**Florida International University, Modesto Maidique Campus + Tamiami Park, Miami-Dade County, Florida**  
-**Project completed: 2025**  
-**Presented to a management team at Florida International University**
+**LiDAR • NAIP multispectral imagery • Random Forest • point-cloud processing • feature engineering • spatial QA/QC**
 
-This applied geospatial project used **USGS 3DEP LiDAR point-cloud data** and **NAIP four-band multispectral imagery** to map urban tree canopy, estimate canopy height, classify major land-cover types, and identify areas where tree-cover expansion could support campus planning and green-infrastructure decisions.
+An applied geospatial machine-learning project that combines **USGS 3DEP LiDAR point clouds** and **NAIP four-band imagery** to map urban tree canopy, characterize vertical structure, classify major land-cover types, and support green-infrastructure planning.
 
-The project combines **3D structural information from LiDAR** with **spectral vegetation information from multispectral imagery**. A Random Forest classifier was then used to separate tree canopy, grass/low vegetation, impervious surfaces, and water.
+> **Portfolio note:** GitHub commit dates reflect when public code and documentation were published or maintained. They are not intended to represent the start date of the underlying analytical work.
 
-## Project Highlights
+## Why this project matters
 
-- Study area: **FIU Modesto Maidique Campus and Tamiami Park**
-- Approximate study extent: **67.5 ha (~167 acres)**
-- LiDAR: **USGS 3DEP Quality Level 2**, approximately **8 returns/m²**
-- Multispectral imagery: **NAIP 4-band RGB + NIR**, approximately **0.3 m resolution**
-- GIS environment: **ArcGIS Pro 3.3**
-- Tree-canopy extraction: **LiDAR CHM + NDVI fusion**
-- Land-cover model: **Random Forest**
-- Estimated urban tree canopy: **35.2%**
-- Overall classification accuracy: **96.5%**
-- Kappa coefficient: **0.953**
-- 5-fold cross-validation accuracy: **97.2%**
-- Tree-canopy F1 score: **96.0%**
+This project demonstrates how **3D structure from LiDAR** and **spectral information from aerial imagery** can be fused into a repeatable classification workflow. It is designed to show practical capability in LiDAR preprocessing, raster generation, feature engineering, supervised machine learning, validation, QA/QC, and decision-support delivery.
 
-## Why This Project
+## Core workflow
 
-Urban tree canopy is important for campus and city planning because trees influence shade, heat exposure, stormwater interception, habitat connectivity, and the quality of outdoor spaces. The goal of this project was to move beyond a simple vegetation map and build a workflow that could distinguish **tall woody vegetation from grass and built structures**.
-
-LiDAR provided the vertical structure needed to estimate height, while NAIP imagery provided the spectral information needed to identify photosynthetically active vegetation.
-
-## Data Sources
-
-| Dataset | Source | Use in Project |
-|---|---|---|
-| LiDAR point cloud | USGS 3D Elevation Program (3DEP), QL2 | DSM, DTM, canopy height and structural information |
-| NAIP imagery | USDA Farm Service Agency | RGB/NIR imagery, NDVI and spectral features |
-| Vector reference data | OpenStreetMap | Spatial reference and contextual mapping |
-
-## Processing Workflow
-
-```text
-USGS 3DEP LiDAR
-        |
-        +--> First returns --> DSM
-        |
-        +--> Ground returns, Class 2 --> DTM
-                                       |
-                                       v
-                               CHM = DSM - DTM
-                                       |
-NAIP RGB + NIR --> NDVI --------------+
-                                       |
-                                       v
-                         CHM + NDVI canopy mask
-                                       |
-                                       v
-                         Random Forest classification
-                                       |
-                                       v
-                           Urban Tree Canopy Map
+```mermaid
+flowchart LR
+ A[USGS 3DEP LiDAR] --> B[DSM / DTM]
+ B --> C[Canopy Height Model]
+ D[NAIP RGB + NIR] --> E[NDVI / NDWI / spectral features]
+ C --> F[Feature stack]
+ E --> F
+ F --> G[Random Forest]
+ G --> H[Accuracy assessment]
+ H --> I[Tree canopy / land-cover products]
+ I --> J[Planning + green-infrastructure interpretation]
 ```
 
-### 1. LiDAR Point-Cloud Processing
+## Technical capabilities demonstrated
 
-LiDAR returns were converted to raster elevation surfaces in ArcGIS Pro.
+| Capability | Implementation |
+|---|---|
+| LiDAR processing | LAS/LAZ ingestion, ground/first-return use, DSM, DTM, CHM |
+| Aerial imagery | NAIP RGB + NIR, NDVI, NDWI and spectral feature generation |
+| Data fusion | structural + spectral feature stack |
+| Machine learning | Random Forest classification |
+| Feature engineering | RGB/NIR, vegetation indices, CHM, roughness and interaction features |
+| Validation | independent test set, confusion matrix, Kappa, precision, recall, F1, cross-validation |
+| QA/QC | coordinate/grid consistency, point-cloud interpretation and spatial review |
+| Decision support | canopy mapping, planting-opportunity screening and urban-green-infrastructure analysis |
 
-- **DSM, Digital Surface Model:** generated from first returns so that trees and buildings were represented in the surface elevation.
-- **DTM, Digital Terrain Model:** generated from ASPRS **Class 2 ground returns** to represent bare-earth elevation.
-- **CHM, Canopy Height Model:** calculated as:
+## Study area and data
 
-```text
-CHM = DSM - DTM
-```
+- **Study area:** Florida International University Modesto Maidique Campus and Tamiami Park, Miami-Dade County, Florida
+- **LiDAR:** USGS 3D Elevation Program (3DEP), Quality Level 2
+- **Imagery:** USDA NAIP four-band RGB + NIR
+- **Primary GIS environment:** ArcGIS Pro
+- **Public-data reproducibility extension:** Python + `laspy` / `lazrs`
 
-A height threshold of approximately **2 m** was used to identify candidate tall vegetation.
+## LiDAR processing
 
-### 2. NDVI Mapping
+LiDAR returns were used to derive the structural surfaces required for canopy analysis:
 
-NAIP red and near-infrared bands were used to calculate NDVI:
+- **DSM:** surface elevation from first returns
+- **DTM:** bare-earth elevation from ASPRS Class 2 ground returns
+- **CHM:** canopy height calculated as `DSM - DTM`
 
-```text
-NDVI = (NIR - Red) / (NIR + Red)
-```
+A height threshold was combined with spectral vegetation information to distinguish tall woody vegetation from grass and built surfaces.
 
-NDVI provided the spectral vegetation signal needed to separate vegetation from most non-vegetated urban surfaces.
+## Multispectral feature engineering
 
-### 3. LiDAR + Multispectral Fusion
-
-Neither LiDAR height nor NDVI alone was sufficient for reliable tree-canopy extraction.
-
-- NDVI alone can confuse **trees with grass or other green surfaces**.
-- Height alone can confuse **trees with buildings and other tall structures**.
-
-The project therefore combined both conditions:
-
-```text
-Candidate Tree Canopy = NDVI > 0.25 AND CHM > 2 m
-```
-
-This fusion step retained pixels that were both **spectrally vegetated** and **structurally tall**.
-
-### 4. Random Forest Land-Cover Classification
-
-The classification workflow used a Random Forest model with a multi-layer feature stack containing:
+NAIP red and near-infrared bands were used to derive vegetation indices and spectral predictors. The classification feature stack included:
 
 1. Red
 2. Green
@@ -110,15 +66,15 @@ The classification workflow used a Random Forest model with a multi-layer featur
 4. Near Infrared
 5. NDVI
 6. NDWI
-7. CHM height
+7. Canopy Height Model
 8. Canopy roughness
 9. CHM × NDVI interaction
 
-The project configuration used **200 decision trees**, with training and validation samples distributed across the four target classes.
+This fusion is important because spectral information alone can confuse trees with grass, while height alone can confuse trees with buildings.
 
-### 5. Accuracy Assessment
+## Machine learning and validation
 
-Classification performance was evaluated using an independent test subset and standard classification metrics, including:
+The land-cover workflow uses a Random Forest classifier with training and validation samples distributed across the target classes. Performance assessment includes:
 
 - confusion matrix
 - overall accuracy
@@ -126,95 +82,37 @@ Classification performance was evaluated using an independent test subset and st
 - precision
 - recall
 - F1 score
-- 5-fold cross-validation
+- cross-validation
 
-## Main Results
+Reported project metrics are preserved from the original analysis and should be interpreted in the context of the documented validation design.
 
-| Land-Cover Class | Estimated Coverage |
-|---|---:|
-| **Tree Canopy** | **35.2%** |
-| Grass / Low Vegetation | 28.6% |
-| Impervious Surface | 24.8% |
-| Water | 11.4% |
+## Decision-support value
 
-### Classification Performance
+The workflow supports:
 
-| Metric | Result |
-|---|---:|
-| Overall accuracy | **96.5%** |
-| Kappa coefficient | **0.953** |
-| 5-fold CV accuracy | **97.2%** |
-| Tree-canopy F1 score | **96.0%** |
-
-The analysis identified continuous tree corridors around campus walkways and park edges while also highlighting impervious and low-vegetation areas that could be examined for future canopy-expansion opportunities.
-
-## Decision-Support Value
-
-The final canopy and land-cover products were designed to support conversations around:
-
-- campus tree-canopy management
+- urban tree-canopy inventory
+- canopy-gap screening
 - green-infrastructure planning
-- prioritization of potential planting areas
-- heat and shade planning
-- stormwater and environmental management
+- shade and heat-mitigation analysis
+- stormwater and environmental planning
 - long-term vegetation monitoring
 
-I presented this work to a **management team at Florida International University** as an example of how LiDAR and multispectral remote sensing can translate geospatial data into practical planning information.
+The work was presented to a management team at Florida International University as an example of converting LiDAR and multispectral data into practical planning information.
 
-## Tools & Skills Demonstrated
+## Reproducible public-data extension
 
-**GIS & Remote Sensing**
-- ArcGIS Pro 3.3
-- Spatial Analyst
-- Image Classification Wizard
-- Raster Calculator / Map Algebra
-- LAS Dataset tools
-- LiDAR point-cloud processing
-- multispectral remote sensing
-- NDVI / NDWI
+This repository also includes a Python pathway for public **USGS 3DEP LAS/LAZ** ingestion:
 
-**LiDAR**
-- LAS point clouds
-- ASPRS return classification
-- DSM generation
-- DTM generation
-- Canopy Height Model generation
-- height thresholding
-- canopy-structure interpretation
+- [`src/real_laz_ingestion.py`](src/real_laz_ingestion.py)
+- [`docs/usgs_3dep_real_data.md`](docs/usgs_3dep_real_data.md)
+- `laspy` and `lazrs` for point-cloud reading
 
-**Machine Learning & Validation**
-- Random Forest
-- feature engineering
-- training / test sampling
-- cross-validation
-- confusion matrix
-- Kappa coefficient
-- precision, recall and F1 score
+The Python extension demonstrates reproducible ingestion and processing architecture. It does not claim that every original ArcGIS Pro result was produced by the Python code.
 
-**Applied Geospatial Analysis**
-- urban tree canopy mapping
-- land-cover classification
-- environmental decision support
-- GIS visualization
-- technical presentation to non-specialist stakeholders
-
-## Limitations
-
-The original project was designed as an applied remote-sensing assessment rather than a formal field inventory. Important limitations include:
-
-- imagery represents a single acquisition period rather than multi-year canopy dynamics
-- a fixed CHM threshold can include some large shrubs or exclude recently pruned trees
-- green roofs or rooftop vegetation can occasionally satisfy both spectral and height criteria
-- the reported accuracy depends on the validation sample
-- no independent on-ground GPS validation campaign was completed
-
-Future work should include independent field validation, multi-year change detection, species-level mapping using UAV or hyperspectral data, and analysis of shade or canopy equity.
-
-## Repository Structure
+## Repository structure
 
 ```text
 lidar-canopy-terrain-analysis/
-├── README.md
 ├── data/
 ├── docs/
 ├── figures/
@@ -225,29 +123,15 @@ lidar-canopy-terrain-analysis/
 └── tests/
 ```
 
-### Reproducible Public-Data Extension
+## Production relevance
 
-This repository also contains a reproducible LiDAR processing demonstration that can ingest public **USGS 3DEP LAS/LAZ** files using Python.
+The project mirrors common geospatial production stages: **point-cloud ingestion → terrain/canopy derivation → aerial-image feature engineering → model training → validation → spatial QA/QC → final mapped deliverables**. The workflow is suitable for extension to larger aerial-mapping areas and additional object/land-cover classes.
 
-- [`src/real_laz_ingestion.py`](src/real_laz_ingestion.py) provides a real LAS/LAZ ingestion pathway.
-- [`docs/usgs_3dep_real_data.md`](docs/usgs_3dep_real_data.md) documents public-data acquisition and provenance.
-- `laspy` and `lazrs` are used for point-cloud reading.
+## Limitations
 
-The Python demonstration is a **reproducibility extension** of the portfolio repository. It should not be interpreted as the exact ArcGIS Pro workflow used to produce every result reported in the 2025 FIU project.
-
-## Data Transparency
-
-The project results above are drawn from the original FIU Urban Tree Canopy assessment and presentation. Large source LiDAR and NAIP datasets are not committed to this repository. Public data should be downloaded directly from the relevant USGS and USDA repositories when reproducing the workflow.
+The project is an applied remote-sensing assessment rather than a formal field inventory. Important limitations include single-period imagery, threshold sensitivity, potential confusion between rooftop vegetation and trees, dependence on validation-sample design, and lack of a dedicated independent GPS field campaign.
 
 ## Author
 
 **Priyanka Belbase**  
-Remote Sensing Scientist | Geospatial Data Scientist | GIS & GeoAI | LiDAR | Machine Learning | Earth Observation
-
-- GitHub: [belbasepriyanka](https://github.com/belbasepriyanka)
-- LinkedIn: [Priyanka Belbase](https://www.linkedin.com/in/priyanka-belbase/)
-- Google Scholar: [Publications](https://scholar.google.com/citations?user=bkSmlQ8AAAAJ)
-
----
-
-**Keywords:** LiDAR, point cloud, urban tree canopy, canopy height model, DSM, DTM, CHM, NAIP, NDVI, Random Forest, ArcGIS Pro, remote sensing, GIS, urban forestry, land-cover classification, geospatial machine learning
+Geospatial Data Science | Remote Sensing | GeoAI | LiDAR | Machine Learning
