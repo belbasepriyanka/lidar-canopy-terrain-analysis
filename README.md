@@ -135,3 +135,15 @@ The project is an applied remote-sensing assessment rather than a formal field i
 
 **Priyanka Belbase**  
 Geospatial Data Science | Remote Sensing | GeoAI | LiDAR | Machine Learning
+
+
+## Forest inventory and operational forestry extension
+
+For a forestry-specific application of the LiDAR + multi-sensor workflow, see:
+
+- [Forest Inventory Intelligence: technical methods and QA/QC](docs/FORESTRY_LIDAR_UAV_EXTENSION.md)
+- [Reproducible Python canopy metrics, validation, change, and scouting index](src/forest_inventory_extension.py)
+- [Automated unit tests](tests/test_forest_inventory_extension.py)
+- [LinkedIn project description](docs/LINKEDIN_POST_FORESTRY.md)
+
+**Data provenance:** The forestry extension is a reusable analysis module and is not a claim of newly acquired or independently field-validated timberland data. A real-site forestry case study is a separate next step.
