@@ -1,0 +1,10 @@
+{
+  "mean_canopy_height_m": 6.387442320466118,
+  "p95_canopy_height_m": 13.661608621403078,
+  "max_height_m": 15.658202625418511,
+  "canopy_cover_fraction": 0.605,
+  "max_canopy_height": 15.658202625418511,
+  "canopy_cover_gt_2m": 0.605,
+  "data_type": "synthetic",
+  "grid_cell_size_m": 2
+}
